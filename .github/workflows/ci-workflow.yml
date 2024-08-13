@@ -16,8 +16,6 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [x64]
-        include:
-          - platform: x64
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -40,8 +38,6 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [x64]
-        include:
-          - platform: x64
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -64,9 +60,6 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [Win32, x64]
-        include:
-          - platform: Win32
-          - platform: x64
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -126,3 +119,67 @@ jobs:
       with:
         name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [linux, macosx, windows, mingw]
+    steps:
+    - name: Download Linux Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: premake-linux-x64
+    - name: Download macOS Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: premake-macosx-x64
+    - name: Download Windows Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: premake-windows-x64
+    - name: Download MinGW Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: premake-mingw64-x64
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Assets - Linux
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: bin/release/premake-linux-x64
+        asset_name: premake-linux-x64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release Assets - macOS
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: bin/release/premake-macosx-x64
+        asset_name: premake-macosx-x64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release Assets - Windows
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: bin/release/premake-windows-x64
+        asset_name: premake-windows-x64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release Assets - MinGW
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: bin/release/premake-mingw64-x64
+        asset_name: premake-mingw64-x64
+        asset_content_type: application/octet-stream
