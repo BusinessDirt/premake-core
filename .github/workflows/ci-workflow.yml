@@ -127,25 +127,25 @@ jobs:
     - name: Checkout	
       uses: actions/checkout@v4	
 
-    - name: Download Linux Artifacts	
+    - name: Download Linux x64 Artifacts	
       uses: actions/download-artifact@v4	
       with:	
         name: premake-linux-x64	
         path: ./artifacts/linux-64/	
 
-    - name: Download macOS Artifacts	
+    - name: Download macOS x64 Artifacts	
       uses: actions/download-artifact@v4	
       with:	
         name: premake-macosx-x64	
         path: ./artifacts/macos-x64/	
 
-    - name: Download macOS ARM64 Artifacts	
+    - name: Download macOS arm64 Artifacts	
       uses: actions/download-artifact@v4	
       with:	
         name: premake-macosx-ARM64
         path: ./artifacts/macos-arm64/	
 
-    - name: Download Windows Win32 Artifacts	
+    - name: Download Windows x86 Artifacts	
       uses: actions/download-artifact@v4	
       with:	
         name: premake-windows-Win32	
@@ -163,7 +163,7 @@ jobs:
         name: premake-mingw64-x64	
         path: ./artifacts/mingw64/	
 
-    - name: Download MinGW64 Artifacts	
+    - name: Download MinGW32 Artifacts	
       uses: actions/download-artifact@v4	
       with:	
         name: premake-mingw32-x86
@@ -171,16 +171,15 @@ jobs:
 
     - name: Create ZIP Files	
       run: |	
-        mkdir -p release	
-        # Flatten and zip Linux artifacts	
-        cd artifacts/linux-x64 && zip -r -q ../../release/premake-linux-x64.zip . -x '*.DS_Store' && cd -	
-        cd artifacts/macos-x64 && zip -r -q ../../release/premake-macosx-x64.zip . -x '*.DS_Store' && cd -	
-        cd artifacts/macos-arm64 && zip -r -q ../../release/premake-macosx-arm64.zip . -x '*.DS_Store' && cd -	
-        cd artifacts/windows-x64 && zip -r -q ../../release/premake-windows-x64.zip . -x '*.DS_Store' && cd -	
-        cd artifacts/windows-x86 && zip -r -q ../../release/premake-windows-x86.zip . -x '*.DS_Store' && cd -	
-        cd artifacts/mingw64 && zip -r -q ../../release/premake-mingw64.zip . -x '*.DS_Store' && cd -	
-        cd artifacts/mingw32 && zip -r -q ../../release/premake-mingw32.zip . -x '*.DS_Store' && cd -	
-  	
+        mkdir -p release
+        cd artifacts/linux-x64 && zip -r -q ../../release/premake-linux-x64.zip . -x '*.DS_Store' && cd -
+        cd artifacts/macos-x64 && zip -r -q ../../release/premake-macosx-x64.zip . -x '*.DS_Store' && cd -
+        cd artifacts/macos-arm64 && zip -r -q ../../release/premake-macosx-arm64.zip . -x '*.DS_Store' && cd -
+        cd artifacts/windows-x64 && zip -r -q ../../release/premake-windows-x64.zip . -x '*.DS_Store' && cd -
+        cd artifacts/windows-x86 && zip -r -q ../../release/premake-windows-x86.zip . -x '*.DS_Store' && cd -
+        cd artifacts/mingw64 && zip -r -q ../../release/premake-mingw64.zip . -x '*.DS_Store' && cd -
+        cd artifacts/mingw32 && zip -r -q ../../release/premake-mingw32.zip . -x '*.DS_Store' && cd -
+        
     - name: Create a Git Tag	
       id: tag	
       run: |	
