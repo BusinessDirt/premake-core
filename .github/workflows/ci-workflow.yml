@@ -154,10 +154,14 @@ jobs:
     - name: Create ZIP Files
       run: |
         mkdir -p release
-        zip -r release/premake-linux-x64.zip ./artifacts/linux/
-        zip -r release/premake-macosx-x64.zip ./artifacts/macos/
-        zip -r release/premake-windows-x64.zip ./artifacts/windows/
-        zip -r release/premake-mingw64-x64.zip ./artifacts/mingw/
+        # Flatten and zip Linux artifacts
+        cd artifacts/linux && zip -r -q ../../release/premake-linux.zip . -x '*.DS_Store' && cd -
+        # Flatten and zip macOS artifacts
+        cd artifacts/macos && zip -r -q ../../release/premake-macosx.zip . -x '*.DS_Store' && cd -
+        # Flatten and zip Windows artifacts
+        cd artifacts/windows && zip -r -q ../../release/premake-windows.zip . -x '*.DS_Store' && cd -
+        # Flatten and zip MinGW artifacts
+        cd artifacts/mingw && zip -r -q ../../release/premake-mingw.zip . -x '*.DS_Store' && cd -
   
     - name: Create a Git Tag
       id: tag
@@ -172,10 +176,10 @@ jobs:
       with:
         tag_name: ${{ env.TAG_NAME }}
         files: |
-          release/premake-linux-x64.zip
-          release/premake-macosx-x64.zip
-          release/premake-windows-x64.zip
-          release/premake-mingw64-x64.zip
+          release/premake-linux.zip
+          release/premake-macosx.zip
+          release/premake-windows.zip
+          release/premake-mingw.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
