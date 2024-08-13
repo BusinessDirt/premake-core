@@ -150,10 +150,20 @@ jobs:
       with:
         name: premake-mingw64-x64
         path: ./artifacts/mingw/
-  
+
+    - name: Create a Git Tag
+      id: tag
+      run: |
+        TAG_NAME=v${{ github.run_number }}
+        git tag $TAG_NAME
+        git push origin $TAG_NAME
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: ${{ steps.tag.outputs.TAG_NAME }}
         files: |
           artifacts/linux/**
           artifacts/macos/**
