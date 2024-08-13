@@ -151,6 +151,14 @@ jobs:
         name: premake-mingw64-x64
         path: ./artifacts/mingw/
 
+    - name: Create ZIP Files
+      run: |
+        mkdir -p release
+        zip -r release/premake-linux-x64.zip ./artifacts/linux/
+        zip -r release/premake-macosx-x64.zip ./artifacts/macos/
+        zip -r release/premake-windows-x64.zip ./artifacts/windows/
+        zip -r release/premake-mingw64-x64.zip ./artifacts/mingw/
+  
     - name: Create a Git Tag
       id: tag
       run: |
@@ -158,16 +166,16 @@ jobs:
         git tag $TAG_NAME
         git push origin $TAG_NAME
         echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-
+  
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ env.TAG_NAME }}
         files: |
-          artifacts/linux/**
-          artifacts/macos/**
-          artifacts/windows/**
-          artifacts/mingw/**
+          release/premake-linux-x64.zip
+          release/premake-macosx-x64.zip
+          release/premake-windows-x64.zip
+          release/premake-mingw64-x64.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
