@@ -1,6 +1,13 @@
 name: CI Workflow
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   linux:
@@ -9,9 +16,11 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [x64]
+        include:
+          - platform: x64
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Build
       run: make -f Bootstrap.mak linux PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
     - name: Test
@@ -20,19 +29,22 @@ jobs:
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: premake-linux-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
+
   macosx:
     runs-on: macos-latest
     strategy:
       matrix:
         config: [debug, release]
         platform: [x64]
+        include:
+          - platform: x64
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Build
       run: make -f Bootstrap.mak macosx PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
     - name: Test
@@ -41,19 +53,23 @@ jobs:
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: premake-macosx-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
+
   windows:
     runs-on: windows-latest
     strategy:
       matrix:
         config: [debug, release]
         platform: [Win32, x64]
+        include:
+          - platform: Win32
+          - platform: x64
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Build
       run: |
         $vcvarsall_path = vswhere.exe -find VC\Auxiliary\Build\vcvarsall.bat
@@ -66,12 +82,13 @@ jobs:
       shell: cmd
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: premake-windows-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
+
   mingw:
-    runs-on: windows-2022
+    runs-on: windows-latest
     strategy:
       matrix:
         config: [debug, release]
@@ -86,8 +103,8 @@ jobs:
         shell: msys2 {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
-    - name: 'Setup MSYS2'
+      uses: actions/checkout@v4
+    - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
       with:
         msystem: ${{ matrix.msystem }}
@@ -105,7 +122,7 @@ jobs:
       run: bin/${{ matrix.config }}/premake5.exe docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
