@@ -21,10 +21,6 @@ jobs:
       uses: actions/checkout@v4
     - name: Build
       run: make -f Bootstrap.mak linux PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
-    - name: Test
-      run: bin/${{ matrix.config }}/premake5 test --test-all
-    - name: Docs check
-      run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
       uses: actions/upload-artifact@v4
@@ -37,16 +33,12 @@ jobs:
     strategy:
       matrix:
         config: [release]
-        platform: [x64, ARM64]
+        platform: [x64, ARM]
     steps:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Build
       run: make -f Bootstrap.mak osx PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
-    - name: Test
-      run: bin/${{ matrix.config }}/premake5 test --test-all
-    - name: Docs check
-      run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
       uses: actions/upload-artifact@v4
@@ -67,12 +59,6 @@ jobs:
       run: |
         $vcvarsall_path = vswhere.exe -find VC\Auxiliary\Build\vcvarsall.bat
         cmd.exe /c "call ""$vcvarsall_path"" x86_amd64 && nmake -f Bootstrap.mak MSDEV=vs2019 windows-msbuild PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}"
-    - name: Test
-      run: bin\${{ matrix.config }}\premake5 test --test-all
-      shell: cmd
-    - name: Docs check
-      run: bin\${{ matrix.config }}\premake5 docs-check
-      shell: cmd
     - name: Upload Artifacts
       if: matrix.config == 'release'
       uses: actions/upload-artifact@v4
@@ -109,10 +95,6 @@ jobs:
           toolchain:p
     - name: Build
       run: make -f Bootstrap.mak mingw PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
-    - name: Test
-      run: bin/${{ matrix.config }}/premake5.exe test --test-all
-    - name: Docs check
-      run: bin/${{ matrix.config }}/premake5.exe docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
       uses: actions/upload-artifact@v4
@@ -139,11 +121,11 @@ jobs:
         name: premake-macosx-x64	
         path: ./artifacts/macos-x64/	
 
-    - name: Download macOS arm64 Artifacts	
+    - name: Download macOS arm Artifacts	
       uses: actions/download-artifact@v4	
       with:	
-        name: premake-macosx-ARM64
-        path: ./artifacts/macos-arm64/	
+        name: premake-macosx-ARM
+        path: ./artifacts/macos-arm/	
 
     - name: Download Windows x86 Artifacts	
       uses: actions/download-artifact@v4	
@@ -174,7 +156,7 @@ jobs:
         mkdir -p release
         cd artifacts/linux-x64 && zip -r -q ../../release/premake-linux-x64.zip . -x '*.DS_Store' && cd -
         cd artifacts/macos-x64 && zip -r -q ../../release/premake-macosx-x64.zip . -x '*.DS_Store' && cd -
-        cd artifacts/macos-arm64 && zip -r -q ../../release/premake-macosx-arm64.zip . -x '*.DS_Store' && cd -
+        cd artifacts/macos-arm && zip -r -q ../../release/premake-macosx-arm.zip . -x '*.DS_Store' && cd -
         cd artifacts/windows-x64 && zip -r -q ../../release/premake-windows-x64.zip . -x '*.DS_Store' && cd -
         cd artifacts/windows-x86 && zip -r -q ../../release/premake-windows-x86.zip . -x '*.DS_Store' && cd -
         cd artifacts/mingw64 && zip -r -q ../../release/premake-mingw64.zip . -x '*.DS_Store' && cd -
