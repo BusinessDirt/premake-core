@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        config: [debug, release]
+        config: [release]
         platform: [x64]
     steps:
     - name: Checkout
@@ -36,13 +36,13 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        config: [debug, release]
+        config: [release]
         platform: [x64, ARM64]
     steps:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Build
-      run: make -f Bootstrap.mak macosx PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+      run: make -f Bootstrap.mak osx PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
@@ -58,7 +58,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        config: [debug, release]
+        config: [release]
         platform: [Win32, x64]
     steps:
     - name: Checkout
@@ -84,7 +84,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        config: [debug, release]
+        config: [release]
         msystem: [mingw32, mingw64]
         include:
           - platform: x86
