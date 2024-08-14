@@ -113,7 +113,7 @@ jobs:
       uses: actions/download-artifact@v4	
       with:	
         name: premake-linux-x64	
-        path: ./artifacts/linux-64/	
+        path: ./artifacts/linux-x64/	
 
     - name: Download macOS x64 Artifacts	
       uses: actions/download-artifact@v4	
@@ -177,7 +177,7 @@ jobs:
         files: |	
           release/premake-linux-x64.zip	
           release/premake-macosx-x64.zip	
-          release/premake-macosx-arm64.zip	
+          release/premake-macosx-arm.zip	
           release/premake-windows-x64.zip	
           release/premake-windows-x86.zip	
           release/premake-mingw64.zip	
